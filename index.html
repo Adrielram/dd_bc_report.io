@@ -151,12 +151,28 @@
             cursor: col-resize;
             user-select: none;
         }
+        .slider-container img {
+            display: block;
+            width: 100%;
+            height: auto;
+            user-select: none;
+            pointer-events: none;
+        }
         .slider-overlay {
             position: absolute;
             top: 0; left: 0;
             height: 100%;
+            width: 50%;
             overflow: hidden;
             border-right: 2px solid var(--accent);
+        }
+        .slider-overlay img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: auto;
+            height: 100%;
+            max-width: none;
         }
         .slider-handle {
             position: absolute;
@@ -344,6 +360,19 @@
                     img.removeAttribute('data-src');
                     loadedImages.add(img.src);
                     img.style.opacity = '1';
+                    
+                    // Fix slider overlay width when image loads
+                    img.onload = function() {
+                        fixSliderOverlay(img);
+                    };
+                }
+            });
+            
+            // Fix any already loaded slider images
+            panel.querySelectorAll('.slider-container').forEach(container => {
+                const img = container.querySelector('img:not([data-src])');
+                if (img && img.complete) {
+                    fixSliderOverlay(img);
                 }
             });
         }
@@ -357,8 +386,25 @@
                         img.removeAttribute('data-src');
                         loadedImages.add(img.src);
                         img.style.opacity = '1';
+                        
+                        // Fix slider overlay width when image loads
+                        img.onload = function() {
+                            fixSliderOverlay(img);
+                        };
                     }
                 });
+            }
+        }
+
+        function fixSliderOverlay(img) {
+            const container = img.closest('.slider-container');
+            if (!container) return;
+            
+            const overlay = container.querySelector('.slider-overlay');
+            const overlayImg = overlay?.querySelector('img');
+            
+            if (overlayImg && container.offsetWidth > 0) {
+                overlayImg.style.width = container.offsetWidth + 'px';
             }
         }
 
