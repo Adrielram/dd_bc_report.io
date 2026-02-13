@@ -233,6 +233,11 @@
                         img.removeAttribute('data-src');
                         loadedImages.add(img.src);
                         img.style.opacity = '1';
+                        
+                        // Fix slider overlay when image loads
+                        img.onload = function() {
+                            fixSliderOverlay(img);
+                        };
                     }
                 }
             });
@@ -402,11 +407,12 @@
             if (!container) return;
             
             const overlay = container.querySelector('.slider-overlay');
-            const overlayImg = overlay?.querySelector('img');
-            const baseImg = container.querySelector('img:not(.slider-overlay img)');
+            if (!overlay) return;
             
-            if (overlayImg && baseImg && container.offsetWidth > 0) {
-                // Make overlay image same width as container to match base image
+            const overlayImg = overlay.querySelector('img');
+            
+            // Always set overlay image width to match container
+            if (overlayImg && container.offsetWidth > 0) {
                 overlayImg.style.width = container.offsetWidth + 'px';
                 overlayImg.style.height = 'auto';
             }
