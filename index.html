@@ -7778,5 +7778,101 @@
             });
         });
     </script>
+    <script>
+// --- Navegación entre páginas ---
+function showPage(pageId, navItem) {
+    // Ocultar todas las páginas
+    document.querySelectorAll('.page-container').forEach(page => {
+        page.classList.remove('active');
+    });
+    
+    // Mostrar la página seleccionada
+    document.getElementById('page-' + pageId).classList.add('active');
+    
+    // Actualizar nav items
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    navItem.classList.add('active');
+}
+
+// --- Cambio de vista (Slider / Side by Side / Diff) ---
+function showView(button, viewType) {
+    const card = button.closest('.comparison-card');
+    
+    // Actualizar tabs
+    card.querySelectorAll('.view-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    button.classList.add('active');
+    
+    // Mostrar el panel correcto
+    card.querySelectorAll('.view-panel').forEach(panel => {
+        panel.classList.remove('active');
+    });
+    card.querySelector(`.view-panel[data-view="${viewType}"]`).classList.add('active');
+}
+
+// --- Funcionalidad del Slider ---
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.slider-container').forEach(container => {
+        const overlay = container.querySelector('.slider-overlay');
+        const handle = container.querySelector('.slider-handle');
+        let isDragging = false;
+
+        function updateSlider(e) {
+            const rect = container.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            
+            // Limitar entre 0 y el ancho del contenedor
+            x = Math.max(0, Math.min(x, rect.width));
+            
+            const percentage = (x / rect.width) * 100;
+            
+            overlay.style.width = percentage + '%';
+            handle.style.left = percentage + '%';
+        }
+
+        // Mouse events
+        container.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            updateSlider(e);
+            container.style.cursor = 'col-resize';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                updateSlider(e);
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            container.style.cursor = 'col-resize';
+        });
+
+        // Touch events para móvil
+        container.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            const touch = e.touches[0];
+            updateSlider(touch);
+        });
+
+        container.addEventListener('touchmove', (e) => {
+            if (isDragging) {
+                const touch = e.touches[0];
+                updateSlider(touch);
+                e.preventDefault();
+            }
+        });
+
+        container.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+    });
+});
+</script>
+</body>
+</html>
 </body>
 </html>
