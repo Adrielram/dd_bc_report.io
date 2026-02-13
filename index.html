@@ -150,6 +150,7 @@
             overflow: hidden;
             cursor: col-resize;
             user-select: none;
+            background: #000;
         }
         .slider-container img {
             display: block;
@@ -170,8 +171,8 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: auto;
-            height: 100%;
+            height: auto;
+            width: 100%;
             max-width: none;
         }
         .slider-handle {
@@ -402,9 +403,12 @@
             
             const overlay = container.querySelector('.slider-overlay');
             const overlayImg = overlay?.querySelector('img');
+            const baseImg = container.querySelector('img:not(.slider-overlay img)');
             
-            if (overlayImg && container.offsetWidth > 0) {
+            if (overlayImg && baseImg && container.offsetWidth > 0) {
+                // Make overlay image same width as container to match base image
                 overlayImg.style.width = container.offsetWidth + 'px';
+                overlayImg.style.height = 'auto';
             }
         }
 
